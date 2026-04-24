@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GuestGuide — Casa Trastevere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#F97316;--coral-light:#FFEDD5;--coral-glow:rgba(249,115,22,0.15);--coral-gradient:linear-gradient(135deg,#F97316 0%,#FB923C 50%,#FDBA74 100%);--gold:#D4A574;--gold-light:#E8C9A0;--black:#0A0A0A;--dark:#1A1A1A;--gray-700:#404040;--gray-500:#737373;--gray-400:#A3A3A3;--gray-200:#E5E5E5;--white:#FFFFFF;--cream:#FFFBF5;--glass:rgba(255,255,255,0.8);--glass-dark:rgba(10,10,10,0.9)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--black);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+.lang-menu{position:fixed;top:16px;right:16px;z-index:1000;display:flex;gap:6px;background:var(--glass-dark);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:6px;border-radius:100px;border:1px solid rgba(255,255,255,0.1)}
+.lang-btn{background:none;border:none;padding:8px 12px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;border-radius:100px;transition:all 0.3s ease;font-family:'Outfit',sans-serif}
+.lang-btn.active{background:var(--coral-gradient);color:var(--white)}
+.lang-btn:not(.active):hover{color:var(--white);background:rgba(255,255,255,0.1)}
+
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:var(--coral-gradient);z-index:9999}
+
+.floating-elements{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.float-shape{position:absolute;border-radius:50%;opacity:0.3;filter:blur(80px)}
+.float-shape-1{width:400px;height:400px;background:var(--coral);top:-150px;right:-150px;animation:floatShape 25s ease-in-out infinite}
+.float-shape-2{width:300px;height:300px;background:var(--gold);bottom:10%;left:-100px;animation:floatShape 30s ease-in-out infinite reverse}
+.float-shape-3{width:200px;height:200px;background:#FDBA74;top:50%;right:-80px;animation:floatShape 20s ease-in-out infinite 5s}
+@keyframes floatShape{0%,100%{transform:translate(0,0) scale(1) rotate(0deg)}25%{transform:translate(40px,-40px) scale(1.1) rotate(5deg)}50%{transform:translate(-30px,30px) scale(0.95) rotate(-5deg)}75%{transform:translate(30px,40px) scale(1.05) rotate(3deg)}}
+
+.particles{position:fixed;inset:0;pointer-events:none;z-index:1}
+.particle{position:absolute;background:var(--coral);border-radius:50%;opacity:0;animation:particleRise 18s ease-in-out infinite}
+@keyframes particleRise{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:0.7}90%{opacity:0.7}100%{opacity:0;transform:translateY(-100px) scale(1)}}
+
+.parallax-text{position:fixed;font-family:'Cormorant Garamond',serif;font-size:clamp(80px,20vw,200px);font-weight:700;color:rgba(249,115,22,0.03);white-space:nowrap;pointer-events:none;z-index:0;text-transform:uppercase;letter-spacing:-5px}
+.parallax-text-1{top:15%;left:-10%}
+.parallax-text-2{top:45%;right:-15%}
+.parallax-text-3{top:75%;left:-5%}
+
+.hero{position:relative;height:100vh;height:100dvh;overflow:hidden;display:flex;align-items:flex-end}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(1.2);transform:scale(1.1);animation:heroKenBurns 30s ease-in-out infinite alternate}
+@keyframes heroKenBurns{0%{transform:scale(1.1) translateX(0) translateY(0)}100%{transform:scale(1.2) translateX(-3%) translateY(-2%)}}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.15) 30%,rgba(10,10,10,0.7) 70%,rgba(10,10,10,0.98) 100%)}
+.hero-glow{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:200%;height:400px;background:radial-gradient(ellipse at center bottom,rgba(249,115,22,0.25) 0%,transparent 60%);pointer-events:none;animation:glowPulse 4s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{opacity:0.6}50%{opacity:1}}
+
+.hero-content{position:relative;z-index:10;padding:0 24px 110px;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:100px;padding:10px 18px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;animation:slideUp 0.8s ease both}
+.hero-badge svg{width:14px;height:14px}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,12vw,56px);font-weight:300;line-height:1.05;color:var(--white);margin-bottom:14px;animation:slideUp 0.8s 0.1s ease both}
+.hero-title em{font-style:italic;font-weight:400;background:linear-gradient(135deg,var(--coral) 0%,var(--gold-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-subtitle{font-size:16px;font-weight:300;color:rgba(255,255,255,0.7);line-height:1.6;animation:slideUp 0.8s 0.2s ease both}
+.hero-stats{display:flex;gap:28px;margin-top:28px;animation:slideUp 0.8s 0.3s ease both}
+.hero-stat{text-align:left}
+.hero-stat-value{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;background:linear-gradient(135deg,var(--coral) 0%,var(--gold-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px}
+.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px;animation:bounce 2s ease-in-out infinite 2s}
+.hero-scroll span{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px}
+.hero-scroll-line{width:1px;height:40px;background:linear-gradient(180deg,rgba(255,255,255,0.4),transparent);animation:scrollLine 2s ease-in-out infinite}
+@keyframes scrollLine{0%,100%{transform:scaleY(1);opacity:0.4}50%{transform:scaleY(0.5);opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-15px)}60%{transform:translateX(-50%) translateY(-8px)}}
+
+.hero-location{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:12px 20px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:100px;color:var(--white);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.3s ease;animation:slideUp 0.8s 0.4s ease both;border:1px solid rgba(255,255,255,0.15)}
+.hero-location:active{transform:scale(0.95);background:rgba(255,255,255,0.2)}
+.hero-location svg{width:16px;height:16px;color:var(--coral)}
+
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 20px;margin-top:-60px;position:relative;z-index:20}
+.qa-btn{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:20px;padding:18px 8px;box-shadow:0 8px 32px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.8);text-decoration:none;color:var(--black);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);border:1px solid rgba(255,255,255,0.5);animation:popIn 0.6s ease both}
+.qa-btn:nth-child(1){animation-delay:0.5s}.qa-btn:nth-child(2){animation-delay:0.6s}.qa-btn:nth-child(3){animation-delay:0.7s}.qa-btn:nth-child(4){animation-delay:0.8s}
+.qa-btn:active{transform:scale(0.92)}
+.qa-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--coral-gradient);color:var(--white);box-shadow:0 6px 20px rgba(249,115,22,0.35);transition:transform 0.3s ease}
+.qa-icon svg{width:22px;height:22px}
+.qa-label{font-size:11px;font-weight:600;color:var(--gray-700);text-align:center}
+@keyframes popIn{from{opacity:0;transform:scale(0.7) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.main-content{position:relative;z-index:10;background:var(--cream);padding-top:20px}
+.section{padding:44px 20px;position:relative}
+.section-header{margin-bottom:26px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;background:var(--coral-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;display:inline-block}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,9vw,40px);font-weight:500;color:var(--black);line-height:1.1}
+
+.wifi-card{background:var(--dark);border-radius:28px;padding:30px 26px;position:relative;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,0.25)}
+.wifi-card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(249,115,22,0.5) 0%,transparent 60%);animation:wifiGlow 3s ease-in-out infinite}
+@keyframes wifiGlow{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.3);opacity:0.8}}
+.wifi-card-label{position:relative;z-index:1;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gray-400);margin-bottom:22px;display:flex;align-items:center;gap:10px}
+.wifi-card-label svg{width:20px;height:20px;color:var(--coral)}
+.wifi-row{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+.wifi-row:last-child{border-bottom:none}
+.wifi-key{font-size:14px;color:var(--gray-400)}
+.wifi-value{font-size:17px;font-weight:600;color:var(--white);display:flex;align-items:center;gap:12px}
+.copy-btn{background:var(--coral-gradient);border:none;border-radius:12px;padding:10px 18px;font-size:12px;font-weight:700;color:var(--white);cursor:pointer;transition:all 0.3s ease;font-family:'Outfit',sans-serif;box-shadow:0 6px 20px rgba(249,115,22,0.4)}
+.copy-btn:active{transform:scale(0.92)}
+.copy-btn.copied{background:linear-gradient(135deg,#22C55E,#16A34A);box-shadow:0 6px 20px rgba(34,197,94,0.4)}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.info-card{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:22px;padding:22px;border:1px solid rgba(255,255,255,0.6);box-shadow:0 8px 32px rgba(0,0,0,0.06);transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+.info-card:active{transform:scale(0.97)}
+.info-card-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--coral-gradient);color:var(--white);margin-bottom:16px;box-shadow:0 6px 20px rgba(249,115,22,0.3)}
+.info-card-icon svg{width:22px;height:22px}
+.info-card-title{font-size:12px;font-weight:500;color:var(--gray-500);margin-bottom:4px}
+.info-card-value{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--black)}
+.info-card.full{grid-column:1 / -1}
+.info-card-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;color:var(--coral);font-size:13px;font-weight:600;text-decoration:none}
+.info-card-link svg{width:14px;height:14px}
+
+.steps{counter-reset:step}
+.step{display:flex;gap:18px;padding:22px 0;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;left:25px;top:74px;bottom:0;width:3px;background:linear-gradient(180deg,var(--coral),var(--gold));border-radius:2px}
+.step-number{width:52px;height:52px;border-radius:18px;background:var(--coral-gradient);color:white;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex-shrink:0;position:relative;z-index:1;box-shadow:0 10px 30px rgba(249,115,22,0.4)}
+.step-content{flex:1;padding-top:6px}
+.step-title{font-size:17px;font-weight:600;color:var(--black);margin-bottom:6px}
+.step-desc{font-size:14px;color:var(--gray-500);line-height:1.7}
+.step-desc strong{color:var(--coral);font-weight:600}
+
+.accordion-item{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:22px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.6);box-shadow:0 8px 32px rgba(0,0,0,0.06);overflow:hidden;transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+.accordion-item.open{box-shadow:0 15px 50px rgba(249,115,22,0.15);border-color:rgba(249,115,22,0.3);transform:scale(1.02)}
+.accordion-header{display:flex;align-items:center;gap:16px;padding:22px;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:'Outfit',sans-serif}
+.acc-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--coral-gradient);color:var(--white);box-shadow:0 6px 20px rgba(249,115,22,0.3);transition:transform 0.3s ease}
+.accordion-item.open .acc-icon{transform:rotate(-10deg) scale(1.1)}
+.acc-icon svg{width:22px;height:22px}
+.acc-text{flex:1}
+.acc-title{font-size:16px;font-weight:600;color:var(--black)}
+.acc-subtitle{font-size:12px;color:var(--gray-500);margin-top:3px}
+.acc-chevron{width:26px;height:26px;color:var(--coral);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);flex-shrink:0}
+.accordion-item.open .acc-chevron{transform:rotate(180deg)}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.4,0,0.2,1)}
+.accordion-body-inner{padding:0 22px 26px;font-size:14px;line-height:1.8;color:var(--gray-700)}
+.accordion-body-inner ul{list-style:none}
+.accordion-body-inner li{padding:10px 0 10px 28px;position:relative}
+.accordion-body-inner li::before{content:'';position:absolute;left:0;top:18px;width:10px;height:10px;border-radius:50%;background:var(--coral-gradient)}
+
+.transport-card{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:22px;padding:22px;border:1px solid rgba(255,255,255,0.6);box-shadow:0 8px 32px rgba(0,0,0,0.06);margin-bottom:14px;display:flex;align-items:flex-start;gap:18px;transition:all 0.3s ease;text-decoration:none;color:inherit}
+.transport-card:active{transform:scale(0.98)}
+.transport-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--coral-gradient);color:var(--white);box-shadow:0 6px 20px rgba(249,115,22,0.3)}
+.transport-icon svg{width:26px;height:26px}
+.transport-info{flex:1}
+.transport-title{font-size:16px;font-weight:600;color:var(--black);margin-bottom:6px}
+.transport-desc{font-size:13px;color:var(--gray-500);line-height:1.6}
+.transport-badge{display:inline-flex;align-items:center;gap:6px;background:var(--coral-glow);color:var(--coral);padding:8px 16px;border-radius:100px;font-size:12px;font-weight:700;margin-top:12px}
+.transport-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;margin-left:12px;padding:8px 16px;background:var(--coral-gradient);color:white;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 4px 15px rgba(249,115,22,0.3)}
+.transport-link:active{transform:scale(0.95)}
+.transport-link svg{width:14px;height:14px}
+
+.places-category{margin-bottom:36px}
+.places-cat-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--black);margin-bottom:18px;display:flex;align-items:center;gap:12px;padding:0 20px}
+.places-cat-title span{font-size:24px}
+.places-scroll{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:0 20px 20px;scrollbar-width:none}
+.places-scroll::-webkit-scrollbar{display:none}
+.place-card{flex:0 0 290px;scroll-snap-align:start;background:var(--white);border-radius:26px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.1);transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+.place-card:active{transform:scale(0.97)}
+.place-img{width:100%;height:170px;object-fit:cover;transition:transform 0.5s ease}
+.place-info{padding:20px}
+.place-name{font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px}
+.place-desc{font-size:13px;color:var(--gray-500);line-height:1.55;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.place-meta{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--gray-400);margin-bottom:14px}
+.place-meta-item{display:flex;align-items:center;gap:5px}
+.place-meta svg{width:14px;height:14px}
+.place-stars{color:#FBBF24;font-weight:600}
+.place-actions{display:flex;gap:10px}
+.place-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:14px;font-size:12px;font-weight:700;text-decoration:none;transition:all 0.3s ease}
+.place-btn:active{transform:scale(0.95)}
+.place-btn-primary{background:var(--coral-gradient);color:white;box-shadow:0 4px 15px rgba(249,115,22,0.3)}
+.place-btn-secondary{background:var(--gray-200);color:var(--gray-700)}
+.place-btn svg{width:14px;height:14px}
+
+.emergency-card{background:linear-gradient(135deg,#FEF2F2 0%,var(--coral-light) 100%);border-radius:22px;padding:22px;display:flex;align-items:center;gap:16px;margin-bottom:14px;border:1px solid rgba(239,68,68,0.1);text-decoration:none;color:inherit}
+.emergency-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.15);color:#EF4444;flex-shrink:0}
+.emergency-icon svg{width:26px;height:26px}
+.emergency-label{font-size:13px;color:var(--gray-500)}
+.emergency-number{font-size:22px;font-weight:700;color:var(--black)}
+.emergency-action{margin-left:auto;width:52px;height:52px;border-radius:16px;background:#EF4444;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;box-shadow:0 8px 25px rgba(239,68,68,0.4);transition:all 0.3s ease}
+.emergency-action:active{transform:scale(0.92)}
+.emergency-action svg{width:24px;height:24px}
+.emergency-card.host{background:linear-gradient(135deg,var(--coral-light) 0%,#FFF7ED 100%)}
+.emergency-card.host .emergency-icon{background:var(--coral-glow);color:var(--coral)}
+.emergency-card.host .emergency-action{background:var(--coral-gradient);box-shadow:0 8px 25px rgba(249,115,22,0.4)}
+
+.section-divider{height:2px;background:linear-gradient(90deg,transparent,var(--coral-light),var(--gold-light),transparent);margin:0 40px}
+
+.footer{padding:56px 20px 110px;text-align:center;background:var(--dark);position:relative;overflow:hidden}
+.footer::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:300%;height:250px;background:radial-gradient(ellipse at center top,rgba(249,115,22,0.2) 0%,transparent 60%)}
+.footer-logo{position:relative;display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:10px}
+.footer-logo-guest{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;background:var(--coral-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-logo-guide{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--white)}
+.footer-tagline{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gray-400);margin-bottom:24px}
+.footer-msg{font-size:15px;color:var(--gray-500);line-height:1.8}
+.footer-host{font-weight:600;color:var(--coral)}
+
+.back-to-top{position:fixed;bottom:80px;right:20px;width:54px;height:54px;border-radius:50%;background:var(--coral-gradient);color:var(--white);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;transform:scale(0.7) translateY(30px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);pointer-events:none;box-shadow:0 10px 30px rgba(249,115,22,0.5);border:none;cursor:pointer}
+.back-to-top.visible{opacity:1;transform:scale(1) translateY(0);pointer-events:auto}
+.back-to-top:active{transform:scale(0.9)}
+.back-to-top svg{width:26px;height:26px}
+
+.powered-bar{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.5);padding:16px 20px;display:flex;align-items:center;justify-content:center;gap:6px;z-index:99;font-size:13px;color:var(--gray-500)}
+.powered-bar strong{background:var(--coral-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+
+.observe-fade{opacity:0;transform:translateY(40px);transition:opacity 0.7s ease,transform 0.7s cubic-bezier(0.4,0,0.2,1)}
+.observe-fade.visible{opacity:1;transform:translateY(0)}
+
+/* === WhatsApp CTA (host acquisition) === */
+.wa-cta{position:fixed;right:20px;bottom:150px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}
+.wa-cta-label{background:#fff;color:#0A0A0A;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;line-height:1.3;padding:10px 14px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.15);max-width:220px;text-align:right;pointer-events:auto;animation:waLabelIn 0.6s ease 0.4s both}
+.wa-cta-btn{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;text-decoration:none;padding:14px 22px;border-radius:999px;box-shadow:0 10px 30px rgba(37,211,102,0.5),0 2px 6px rgba(0,0,0,0.15);min-height:44px;transition:transform 0.25s ease,box-shadow 0.25s ease;animation:waPulse 2.2s ease-in-out infinite}
+.wa-cta-btn:hover{transform:scale(1.04);box-shadow:0 14px 36px rgba(37,211,102,0.6),0 2px 8px rgba(0,0,0,0.18)}
+.wa-cta-btn:active{transform:scale(0.96)}
+.wa-cta-btn svg{width:20px;height:20px;flex-shrink:0}
+@keyframes waPulse{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.03)}}
+@keyframes waLabelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media (max-width:480px){
+  .wa-cta{right:14px;bottom:140px;gap:8px}
+  .wa-cta-label{font-size:12px;padding:8px 12px;max-width:190px;border-radius:12px}
+  .wa-cta-btn{font-size:14px;padding:12px 18px;min-height:44px}
+  .wa-cta-btn svg{width:18px;height:18px}
+}
+@media (prefers-reduced-motion:reduce){
+  .wa-cta-btn,.wa-cta-label{animation:none}
+  .wa-cta-btn:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="lang-menu">
+  <button class="lang-btn active" onclick="setLang('it')">🇮🇹 IT</button>
+  <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+  <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+</div>
+
+<div class="floating-elements">
+  <div class="float-shape float-shape-1"></div>
+  <div class="float-shape float-shape-2"></div>
+  <div class="float-shape float-shape-3"></div>
+</div>
+
+<div class="parallax-text parallax-text-1" data-speed="0.03">ROMA</div>
+<div class="parallax-text parallax-text-2" data-speed="-0.02">TRASTEVERE</div>
+<div class="parallax-text parallax-text-3" data-speed="0.025">ETERNA</div>
+
+<div class="particles" id="particles"></div>
+
+<section class="hero">
+  <img class="hero-img" src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1600&q=80" alt="Roma" loading="eager">
+  <div class="hero-overlay"></div>
+  <div class="hero-glow"></div>
+  
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span data-i18n="badge">Guida Digitale</span>
+    </div>
+    <h1 class="hero-title"><span data-i18n="welcome">Benvenuti a</span><br><em>Casa Trastevere</em></h1>
+    <p class="hero-subtitle" data-i18n="subtitle">Il vostro angolo di Roma, tra vicoli storici e tramonti dorati</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-value" data-count="4">0</div><div class="hero-stat-label" data-i18n="guests">Ospiti</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" data-count="2">0</div><div class="hero-stat-label" data-i18n="bedrooms">Camere</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" data-count="1">0</div><div class="hero-stat-label" data-i18n="bathroom">Bagno</div></div>
+    </div>
+    <a href="https://www.google.com/maps/search/Trastevere+Roma" target="_blank" class="hero-location">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span data-i18n="view_map">Vedi su Google Maps</span>
+    </a>
+  </div>
+  <div class="hero-scroll"><span data-i18n="scroll">Scorri</span><div class="hero-scroll-line"></div></div>
+</section>
+
+<div class="quick-actions">
+  <a href="#wifi" class="qa-btn"><div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></div><span class="qa-label">Wi-Fi</span></a>
+  <a href="#checkin" class="qa-btn"><div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><span class="qa-label">Check-in</span></a>
+  <a href="#house" class="qa-btn"><div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="qa-label" data-i18n="qa_house">La Casa</span></a>
+  <a href="tel:+393331234567" class="qa-btn"><div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg></div><span class="qa-label" data-i18n="call_host">Chiama Host</span></a>
+</div>
+
+<div class="main-content">
+
+<section class="section" id="wifi">
+  <div class="section-header observe-fade"><div class="section-label" data-i18n="wifi_label">Connessione</div><h2 class="section-title">Wi-Fi</h2></div>
+  <div class="wifi-card observe-fade">
+    <div class="wifi-card-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg><span data-i18n="wifi_details">Dettagli Rete</span></div>
+    <div class="wifi-row"><span class="wifi-key" data-i18n="wifi_name">Nome Rete</span><span class="wifi-value">CasaTrastevere_5G</span></div>
+    <div class="wifi-row"><span class="wifi-key">Password</span><span class="wifi-value"><span id="wifi-pw">Roma2025!</span><button class="copy-btn" onclick="copyWifi(this)" data-i18n="copy">Copia</button></span></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" id="checkin">
+  <div class="section-header observe-fade"><div class="section-label" data-i18n="times_label">Orari</div><h2 class="section-title" data-i18n="checkin_title">Check-in & Check-out</h2></div>
+  <div class="info-grid observe-fade">
+    <div class="info-card"><div class="info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg></div><div class="info-card-title">Check-in</div><div class="info-card-value">15:00</div></div>
+    <div class="info-card"><div class="info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M19.8 12H9"/></svg></div><div class="info-card-title">Check-out</div><div class="info-card-value">10:00</div></div>
+    <div class="info-card full"><div class="info-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="info-card-title" data-i18n="early_late">Early check-in / Late check-out</div><div class="info-card-value" style="font-size:16px;" data-i18n="contact_airbnb">Contattami su Airbnb</div><a href="https://www.airbnb.com/messages" target="_blank" class="info-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span data-i18n="open_airbnb">Apri Airbnb</span></a></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" id="selfcheckin">
+  <div class="section-header observe-fade"><div class="section-label" data-i18n="instructions_label">Istruzioni</div><h2 class="section-title" data-i18n="selfcheckin_title">Self Check-in</h2></div>
+  <div class="steps observe-fade">
+    <div class="step"><div class="step-number">1</div><div class="step-content"><div class="step-title" data-i18n="step1_title">Entra nel portone</div><div class="step-desc" data-i18n="step1_desc">Il codice del portone principale è <strong>1234#</strong>. Spingi il portone dopo il bip.</div></div></div>
+    <div class="step"><div class="step-number">2</div><div class="step-content"><div class="step-title" data-i18n="step2_title">Sali al 2° piano</div><div class="step-desc" data-i18n="step2_desc">Prendi le scale a sinistra oppure l'ascensore. Appartamento sulla destra, porta rossa.</div></div></div>
+    <div class="step"><div class="step-number">3</div><div class="step-content"><div class="step-title" data-i18n="step3_title">Apri con la KeyBox</div><div class="step-desc" data-i18n="step3_desc">La KeyBox è accanto alla porta. Codice: <strong>5678</strong>. Dentro trovi le chiavi.</div></div></div>
+    <div class="step"><div class="step-number">4</div><div class="step-content"><div class="step-title" data-i18n="step4_title">Sei a casa!</div><div class="step-desc" data-i18n="step4_desc">Fai come se fossi a casa tua. Scrivimi su Airbnb se hai bisogno.</div></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" id="house">
+  <div class="section-header observe-fade"><div class="section-label" data-i18n="house_label">La Tua Casa</div><h2 class="section-title" data-i18n="house_title">Istruzioni & Regole</h2></div>
+  <div class="observe-fade">
+    <div class="accordion-item"><button class="accordion-header" onclick="toggleAcc(this)"><div class="acc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/><circle cx="8" cy="14" r="2"/><path d="M14 12h4M14 16h4"/></svg></div><div class="acc-text"><div class="acc-title" data-i18n="washing_title">Lavatrice</div><div class="acc-subtitle" data-i18n="washing_sub">Come usare la lavatrice</div></div><svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="accordion-body"><div class="accordion-body-inner"><ul><li data-i18n="wash1">Apri lo sportello e carica il bucato (max 7 kg)</li><li data-i18n="wash2">Aggiungi il detersivo nel cassetto in alto a sinistra</li><li data-i18n="wash3">Seleziona <strong>"Cotone 40°"</strong> per un lavaggio standard</li><li data-i18n="wash4">Premi il pulsante di avvio (grande in basso a destra)</li><li data-i18n="wash5">Il ciclo dura circa 1 ora e 30 minuti</li></ul></div></div></div>
+    <div class="accordion-item"><button class="accordion-header" onclick="toggleAcc(this)"><div class="acc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 003-3v14a3 3 0 00-6 0V5a3 3 0 013-3z" transform="rotate(0 12 12)"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></div><div class="acc-text"><div class="acc-title" data-i18n="ac_title">Aria Condizionata</div><div class="acc-subtitle" data-i18n="ac_sub">Telecomando e istruzioni</div></div><svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="accordion-body"><div class="accordion-body-inner"><ul><li data-i18n="ac1">Il telecomando è sul comodino della camera</li><li data-i18n="ac2">Premi <strong>ON/OFF</strong> per accendere</li><li data-i18n="ac3">Temperatura consigliata: 22°-26°</li><li data-i18n="ac4">Modalità: <strong>AUTO</strong></li><li data-i18n="ac5">Spegni quando esci</li></ul></div></div></div>
+    <div class="accordion-item"><button class="accordion-header" onclick="toggleAcc(this)"><div class="acc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div class="acc-text"><div class="acc-title" data-i18n="rules_title">Regole della Casa</div><div class="acc-subtitle" data-i18n="rules_sub">Poche regole, tanto rispetto</div></div><svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="accordion-body"><div class="accordion-body-inner"><ul><li data-i18n="rule1"><strong>No fumo</strong> all'interno</li><li data-i18n="rule2"><strong>No feste</strong> o eventi rumorosi</li><li data-i18n="rule3">Silenzio dopo le <strong>22:00</strong></li><li data-i18n="rule4">Raccolta differenziata nel cortile</li><li data-i18n="rule5">Tratta l'appartamento come casa tua</li></ul></div></div></div>
+    <div class="accordion-item"><button class="accordion-header" onclick="toggleAcc(this)"><div class="acc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="acc-text"><div class="acc-title">Smart TV</div><div class="acc-subtitle" data-i18n="tv_sub">Netflix, YouTube e altro</div></div><svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="accordion-body"><div class="accordion-body-inner"><ul><li data-i18n="tv1">Netflix, Prime Video e YouTube preinstallati</li><li data-i18n="tv2">Usa il tuo account personale</li><li data-i18n="tv3">Fai <strong>logout</strong> prima del check-out</li><li data-i18n="tv4">Telecomando nel cassetto TV</li></ul></div></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" id="transport">
+  <div class="section-header observe-fade"><div class="section-label" data-i18n="transport_label">Come Arrivare</div><h2 class="section-title" data-i18n="transport_title">Trasporti</h2></div>
+  <div class="observe-fade">
+    <div class="transport-card"><div class="transport-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div><div class="transport-info"><div class="transport-title" data-i18n="fiumicino">Da Fiumicino (FCO)</div><div class="transport-desc" data-i18n="fiumicino_desc">Leonardo Express fino a Termini (32 min), poi tram 8 o bus H fino a Trastevere.</div><div style="display:flex;flex-wrap:wrap;align-items:center"><div class="transport-badge">~45 min</div><a href="https://www.google.com/maps/dir/Fiumicino+Airport/Trastevere+Roma" target="_blank" class="transport-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a></div></div></div>
+    <div class="transport-card"><div class="transport-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="22" height="12" rx="2"/><path d="M1 10h22M8 6v12M16 6v12"/></svg></div><div class="transport-info"><div class="transport-title" data-i18n="ciampino">Da Ciampino (CIA)</div><div class="transport-desc" data-i18n="ciampino_desc">Bus Terravision fino a Termini, poi tram 8 fino a Trastevere.</div><div style="display:flex;flex-wrap:wrap;align-items:center"><div class="transport-badge">~40 min</div><a href="https://www.google.com/maps/dir/Ciampino+Airport/Trastevere+Roma" target="_blank" class="transport-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a></div></div></div>
+    <div class="transport-card"><div class="transport-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="transport-info"><div class="transport-title">Taxi</div><div class="transport-desc" data-i18n="taxi_desc">Tariffa fissa: Fiumicino → Centro: 50€ / Ciampino → Centro: 31€</div><div style="display:flex;flex-wrap:wrap;align-items:center"><div class="transport-badge" data-i18n="fixed_rate">Tariffa fissa</div><a href="tel:+390635700" class="transport-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg><span data-i18n="call_taxi">Chiama Taxi</span></a></div></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" id="places" style="padding-left:0;padding-right:0;">
+  <div class="section-header observe-fade" style="padding:0 20px;"><div class="section-label" data-i18n="places_label">Consigli del Tuo Host</div><h2 class="section-title" data-i18n="places_title">I Miei Posti Preferiti</h2></div>
+
+  <div class="places-category observe-fade">
+    <div class="places-cat-title"><span>🍝</span> <span data-i18n="restaurants">Ristoranti</span></div>
+    <div class="places-scroll">
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&q=80" alt="Trattoria" loading="lazy"><div class="place-info"><div class="place-name">Da Enzo al 29</div><div class="place-desc" data-i18n="enzo_desc">La cacio e pepe migliore di Trastevere. Prenota o vai presto!</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★★</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>2 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Da+Enzo+al+29+Roma" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a><a href="tel:+390658122260" class="place-btn place-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg><span data-i18n="call">Chiama</span></a></div></div></div>
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80" alt="Pizzeria" loading="lazy"><div class="place-info"><div class="place-name">Pizzeria Ai Marmi</div><div class="place-desc" data-i18n="marmi_desc">"L'obitorio" per i tavoli di marmo. Pizza romana croccante!</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★½</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>5 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Pizzeria+Ai+Marmi+Roma" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a><a href="tel:+39065800919" class="place-btn place-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg><span data-i18n="call">Chiama</span></a></div></div></div>
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80" alt="Ristorante" loading="lazy"><div class="place-info"><div class="place-name">Grazia & Graziella</div><div class="place-desc" data-i18n="grazia_desc">Cucina romana moderna. Perfetto per una cena romantica.</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★★</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>4 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Grazia+e+Graziella+Roma" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a><a href="tel:+390658334795" class="place-btn place-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg><span data-i18n="call">Chiama</span></a></div></div></div>
+    </div>
+  </div>
+
+  <div class="places-category observe-fade">
+    <div class="places-cat-title"><span>☕</span> <span data-i18n="bars">Bar & Caffè</span></div>
+    <div class="places-scroll">
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80" alt="Caffè" loading="lazy"><div class="place-info"><div class="place-name">Caffè di Marzio</div><div class="place-desc" data-i18n="marzio_desc">Colazione con vista su Piazza Santa Maria. Cornetto top!</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★½</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>3 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Caffe+di+Marzio+Roma+Trastevere" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a></div></div></div>
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&q=80" alt="Aperitivo" loading="lazy"><div class="place-info"><div class="place-name">Freni e Frizioni</div><div class="place-desc" data-i18n="freni_desc">L'aperitivo più cool di Trastevere. Vai al tramonto!</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★★</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>6 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Freni+e+Frizioni+Roma" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a></div></div></div>
+    </div>
+  </div>
+
+  <div class="places-category observe-fade">
+    <div class="places-cat-title"><span>🏛️</span> <span data-i18n="visit">Da Visitare</span></div>
+    <div class="places-scroll">
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&q=80" alt="Colosseo" loading="lazy"><div class="place-info"><div class="place-name" data-i18n="colosseum">Colosseo</div><div class="place-desc" data-i18n="colosseum_desc">Prenota online! Il biglietto include Foro Romano e Palatino.</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★★</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>20 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Colosseo+Roma" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a><a href="https://www.coopculture.it/it/poi/colosseo/" target="_blank" class="place-btn place-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span data-i18n="book">Prenota</span></a></div></div></div>
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=400&q=80" alt="Vaticano" loading="lazy"><div class="place-info"><div class="place-name" data-i18n="vatican">Musei Vaticani</div><div class="place-desc" data-i18n="vatican_desc">Obbligatorio prenotare! Vai il venerdì sera con meno gente.</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★★</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>15 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Musei+Vaticani+Roma" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a><a href="https://www.museivaticani.va/content/museivaticani/it/visita-i-musei/biglietti.html" target="_blank" class="place-btn place-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span data-i18n="book">Prenota</span></a></div></div></div>
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1525874684015-58379d421a52?w=400&q=80" alt="Fontana di Trevi" loading="lazy"><div class="place-info"><div class="place-name" data-i18n="trevi">Fontana di Trevi</div><div class="place-desc" data-i18n="trevi_desc">Vai alle 7 di mattina per goderti la fontana quasi vuota!</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★★</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>25 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Fontana+di+Trevi+Roma" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a></div></div></div>
+    </div>
+  </div>
+
+  <div class="places-category observe-fade">
+    <div class="places-cat-title"><span>🍦</span> <span data-i18n="gelato">Gelato & Dolci</span></div>
+    <div class="places-scroll">
+      <div class="place-card"><img class="place-img" src="https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400&q=80" alt="Gelato" loading="lazy"><div class="place-info"><div class="place-name">Fior di Luna</div><div class="place-desc" data-i18n="fior_desc">Gelato artigianale bio. Il pistacchio di Bronte è sublime!</div><div class="place-meta"><span class="place-meta-item place-stars">★★★★★</span><span class="place-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>1 min</span></div><div class="place-actions"><a href="https://www.google.com/maps/dir//Fior+di+Luna+Roma+Trastevere" target="_blank" class="place-btn place-btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="directions">Indicazioni</span></a></div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="section" id="emergency">
+  <div class="section-header observe-fade"><div class="section-label" data-i18n="contacts_label">Contatti Utili</div><h2 class="section-title" data-i18n="emergency_title">Emergenze</h2></div>
+  <div class="observe-fade">
+    <a href="tel:112" class="emergency-card"><div class="emergency-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg></div><div><div class="emergency-label" data-i18n="emergency">Emergenze</div><div class="emergency-number">112</div></div><div class="emergency-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg></div></a>
+    <a href="tel:+393331234567" class="emergency-card host"><div class="emergency-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="emergency-label" data-i18n="your_host">Il tuo Host — Marco</div><div class="emergency-number">+39 333 1234567</div></div><div class="emergency-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg></div></a>
+  </div>
+</section>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-logo"><span class="footer-logo-guest">Guest</span><span class="footer-logo-guide">Guide</span></div>
+  <div class="footer-tagline">Your Stay, Simplified</div>
+  <p class="footer-msg" data-i18n="footer_msg">Questa guida è stata creata con ❤️ dal tuo host <span class="footer-host">Marco</span>.<br>Buon soggiorno a Roma!</p>
+</footer>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+
+<div class="powered-bar">Powered by <strong>GuestGuide</strong></div>
+
+<script>
+const translations={it:{badge:"Guida Digitale",welcome:"Benvenuti a",subtitle:"Il vostro angolo di Roma, tra vicoli storici e tramonti dorati",guests:"Ospiti",bedrooms:"Camere",bathroom:"Bagno",scroll:"Scorri",qa_house:"La Casa",call_host:"Chiama Host",wifi_label:"Connessione",wifi_details:"Dettagli Rete",wifi_name:"Nome Rete",copy:"Copia",copied:"Copiato!",times_label:"Orari",checkin_title:"Check-in & Check-out",early_late:"Early check-in / Late check-out",contact_airbnb:"Contattami su Airbnb",open_airbnb:"Apri Airbnb",instructions_label:"Istruzioni",selfcheckin_title:"Self Check-in",step1_title:"Entra nel portone",step1_desc:"Il codice del portone principale è <strong>1234#</strong>. Spingi il portone dopo il bip.",step2_title:"Sali al 2° piano",step2_desc:"Prendi le scale a sinistra oppure l'ascensore. Appartamento sulla destra, porta rossa.",step3_title:"Apri con la KeyBox",step3_desc:"La KeyBox è accanto alla porta. Codice: <strong>5678</strong>. Dentro trovi le chiavi.",step4_title:"Sei a casa!",step4_desc:"Fai come se fossi a casa tua. Scrivimi su Airbnb se hai bisogno.",house_label:"La Tua Casa",house_title:"Istruzioni & Regole",washing_title:"Lavatrice",washing_sub:"Come usare la lavatrice",wash1:"Apri lo sportello e carica il bucato (max 7 kg)",wash2:"Aggiungi il detersivo nel cassetto in alto a sinistra",wash3:"Seleziona <strong>\"Cotone 40°\"</strong> per un lavaggio standard",wash4:"Premi il pulsante di avvio (grande in basso a destra)",wash5:"Il ciclo dura circa 1 ora e 30 minuti",ac_title:"Aria Condizionata",ac_sub:"Telecomando e istruzioni",ac1:"Il telecomando è sul comodino della camera",ac2:"Premi <strong>ON/OFF</strong> per accendere",ac3:"Temperatura consigliata: 22°-26°",ac4:"Modalità: <strong>AUTO</strong>",ac5:"Spegni quando esci",rules_title:"Regole della Casa",rules_sub:"Poche regole, tanto rispetto",rule1:"<strong>No fumo</strong> all'interno",rule2:"<strong>No feste</strong> o eventi rumorosi",rule3:"Silenzio dopo le <strong>22:00</strong>",rule4:"Raccolta differenziata nel cortile",rule5:"Tratta l'appartamento come casa tua",tv_sub:"Netflix, YouTube e altro",tv1:"Netflix, Prime Video e YouTube preinstallati",tv2:"Usa il tuo account personale",tv3:"Fai <strong>logout</strong> prima del check-out",tv4:"Telecomando nel cassetto TV",transport_label:"Come Arrivare",transport_title:"Trasporti",fiumicino:"Da Fiumicino (FCO)",fiumicino_desc:"Leonardo Express fino a Termini (32 min), poi tram 8 o bus H fino a Trastevere.",ciampino:"Da Ciampino (CIA)",ciampino_desc:"Bus Terravision fino a Termini, poi tram 8 fino a Trastevere.",taxi_desc:"Tariffa fissa: Fiumicino → Centro: 50€ / Ciampino → Centro: 31€",fixed_rate:"Tariffa fissa",directions:"Indicazioni",call_taxi:"Chiama Taxi",places_label:"Consigli del Tuo Host",places_title:"I Miei Posti Preferiti",restaurants:"Ristoranti",bars:"Bar & Caffè",visit:"Da Visitare",gelato:"Gelato & Dolci",enzo_desc:"La cacio e pepe migliore di Trastevere. Prenota o vai presto!",marmi_desc:"\"L'obitorio\" per i tavoli di marmo. Pizza romana croccante!",grazia_desc:"Cucina romana moderna. Perfetto per una cena romantica.",marzio_desc:"Colazione con vista su Piazza Santa Maria. Cornetto top!",freni_desc:"L'aperitivo più cool di Trastevere. Vai al tramonto!",colosseum:"Colosseo",colosseum_desc:"Prenota online! Il biglietto include Foro Romano e Palatino.",vatican:"Musei Vaticani",vatican_desc:"Obbligatorio prenotare! Vai il venerdì sera con meno gente.",trevi:"Fontana di Trevi",trevi_desc:"Vai alle 7 di mattina per goderti la fontana quasi vuota!",fior_desc:"Gelato artigianale bio. Il pistacchio di Bronte è sublime!",call:"Chiama",book:"Prenota",view_map:"Vedi su Google Maps",contacts_label:"Contatti Utili",emergency_title:"Emergenze",emergency:"Emergenze",your_host:"Il tuo Host — Marco",footer_msg:"Questa guida è stata creata con ❤️ dal tuo host <span class=\"footer-host\">Marco</span>.<br>Buon soggiorno a Roma!"},en:{badge:"Digital Guide",welcome:"Welcome to",subtitle:"Your corner of Rome, among historic alleys and golden sunsets",guests:"Guests",bedrooms:"Bedrooms",bathroom:"Bathroom",scroll:"Scroll",qa_house:"The House",call_host:"Call Host",wifi_label:"Connection",wifi_details:"Network Details",wifi_name:"Network Name",copy:"Copy",copied:"Copied!",times_label:"Times",checkin_title:"Check-in & Check-out",early_late:"Early check-in / Late check-out",contact_airbnb:"Contact me on Airbnb",open_airbnb:"Open Airbnb",instructions_label:"Instructions",selfcheckin_title:"Self Check-in",step1_title:"Enter the main door",step1_desc:"The door code is <strong>1234#</strong>. Push the door after the beep.",step2_title:"Go to the 2nd floor",step2_desc:"Take the stairs on the left or the elevator. Apartment on the right, red door.",step3_title:"Open with the KeyBox",step3_desc:"The KeyBox is next to the door. Code: <strong>5678</strong>. Keys are inside.",step4_title:"You're home!",step4_desc:"Make yourself at home. Message me on Airbnb if you need anything.",house_label:"Your Home",house_title:"Instructions & Rules",washing_title:"Washing Machine",washing_sub:"How to use the washing machine",wash1:"Open the door and load laundry (max 7 kg)",wash2:"Add detergent in the top left drawer",wash3:"Select <strong>\"Cotton 40°\"</strong> for a standard wash",wash4:"Press the start button (large one at bottom right)",wash5:"The cycle takes about 1 hour and 30 minutes",ac_title:"Air Conditioning",ac_sub:"Remote control and instructions",ac1:"The remote is on the bedroom nightstand",ac2:"Press <strong>ON/OFF</strong> to turn on",ac3:"Recommended temperature: 22°-26°",ac4:"Mode: <strong>AUTO</strong>",ac5:"Turn off when you leave",rules_title:"House Rules",rules_sub:"Few rules, lots of respect",rule1:"<strong>No smoking</strong> inside",rule2:"<strong>No parties</strong> or loud events",rule3:"Quiet after <strong>10:00 PM</strong>",rule4:"Recycling bins in the courtyard",rule5:"Treat the apartment as your own",tv_sub:"Netflix, YouTube and more",tv1:"Netflix, Prime Video and YouTube pre-installed",tv2:"Use your personal account",tv3:"Remember to <strong>log out</strong> before check-out",tv4:"Remote in the TV drawer",transport_label:"How to Get Here",transport_title:"Transportation",fiumicino:"From Fiumicino (FCO)",fiumicino_desc:"Leonardo Express to Termini (32 min), then tram 8 or bus H to Trastevere.",ciampino:"From Ciampino (CIA)",ciampino_desc:"Terravision bus to Termini, then tram 8 to Trastevere.",taxi_desc:"Fixed rate: Fiumicino → Center: €50 / Ciampino → Center: €31",fixed_rate:"Fixed rate",directions:"Directions",call_taxi:"Call Taxi",places_label:"Your Host's Tips",places_title:"My Favorite Places",restaurants:"Restaurants",bars:"Bars & Cafés",visit:"Must See",gelato:"Gelato & Sweets",enzo_desc:"The best cacio e pepe in Trastevere. Book ahead or go early!",marmi_desc:"\"The morgue\" for its marble tables. Crispy Roman pizza!",grazia_desc:"Modern Roman cuisine. Perfect for a romantic dinner.",marzio_desc:"Breakfast with a view of Piazza Santa Maria. Amazing croissants!",freni_desc:"The coolest aperitivo in Trastevere. Go at sunset!",colosseum:"Colosseum",colosseum_desc:"Book online! Ticket includes Roman Forum and Palatine.",vatican:"Vatican Museums",vatican_desc:"Must book ahead! Go Friday evening for fewer crowds.",trevi:"Trevi Fountain",trevi_desc:"Go at 7 AM to enjoy the fountain almost empty!",fior_desc:"Organic artisan gelato. The Bronte pistachio is sublime!",call:"Call",book:"Book",view_map:"View on Google Maps",contacts_label:"Useful Contacts",emergency_title:"Emergencies",emergency:"Emergencies",your_host:"Your Host — Marco",footer_msg:"This guide was made with ❤️ by your host <span class=\"footer-host\">Marco</span>.<br>Enjoy your stay in Rome!"},es:{badge:"Guía Digital",welcome:"Bienvenidos a",subtitle:"Vuestro rincón de Roma, entre callejones históricos y atardeceres dorados",guests:"Huéspedes",bedrooms:"Habitaciones",bathroom:"Baño",scroll:"Desliza",qa_house:"La Casa",call_host:"Llamar Host",wifi_label:"Conexión",wifi_details:"Detalles de la Red",wifi_name:"Nombre de Red",copy:"Copiar",copied:"¡Copiado!",times_label:"Horarios",checkin_title:"Check-in & Check-out",early_late:"Check-in anticipado / Check-out tardío",contact_airbnb:"Contáctame en Airbnb",open_airbnb:"Abrir Airbnb",instructions_label:"Instrucciones",selfcheckin_title:"Auto Check-in",step1_title:"Entra por el portón",step1_desc:"El código del portón principal es <strong>1234#</strong>. Empuja la puerta después del pitido.",step2_title:"Sube al 2° piso",step2_desc:"Toma las escaleras a la izquierda o el ascensor. Apartamento a la derecha, puerta roja.",step3_title:"Abre con la KeyBox",step3_desc:"La KeyBox está junto a la puerta. Código: <strong>5678</strong>. Las llaves están dentro.",step4_title:"¡Estás en casa!",step4_desc:"Siéntete como en tu casa. Escríbeme en Airbnb si necesitas algo.",house_label:"Tu Casa",house_title:"Instrucciones y Reglas",washing_title:"Lavadora",washing_sub:"Cómo usar la lavadora",wash1:"Abre la puerta y carga la ropa (máx. 7 kg)",wash2:"Añade detergente en el cajón superior izquierdo",wash3:"Selecciona <strong>\"Algodón 40°\"</strong> para un lavado estándar",wash4:"Pulsa el botón de inicio (grande abajo a la derecha)",wash5:"El ciclo dura aproximadamente 1 hora y 30 minutos",ac_title:"Aire Acondicionado",ac_sub:"Mando y instrucciones",ac1:"El mando está en la mesita de noche",ac2:"Pulsa <strong>ON/OFF</strong> para encender",ac3:"Temperatura recomendada: 22°-26°",ac4:"Modo: <strong>AUTO</strong>",ac5:"Apaga cuando salgas",rules_title:"Reglas de la Casa",rules_sub:"Pocas reglas, mucho respeto",rule1:"<strong>No fumar</strong> en el interior",rule2:"<strong>No fiestas</strong> ni eventos ruidosos",rule3:"Silencio después de las <strong>22:00</strong>",rule4:"Reciclaje en el patio",rule5:"Trata el apartamento como si fuera tuyo",tv_sub:"Netflix, YouTube y más",tv1:"Netflix, Prime Video y YouTube preinstalados",tv2:"Usa tu cuenta personal",tv3:"Recuerda cerrar sesión antes del check-out",tv4:"Mando en el cajón del TV",transport_label:"Cómo Llegar",transport_title:"Transporte",fiumicino:"Desde Fiumicino (FCO)",fiumicino_desc:"Leonardo Express hasta Termini (32 min), luego tranvía 8 o bus H hasta Trastevere.",ciampino:"Desde Ciampino (CIA)",ciampino_desc:"Bus Terravision hasta Termini, luego tranvía 8 hasta Trastevere.",taxi_desc:"Tarifa fija: Fiumicino → Centro: 50€ / Ciampino → Centro: 31€",fixed_rate:"Tarifa fija",directions:"Indicaciones",call_taxi:"Llamar Taxi",places_label:"Consejos de Tu Host",places_title:"Mis Lugares Favoritos",restaurants:"Restaurantes",bars:"Bares y Cafés",visit:"Qué Visitar",gelato:"Helados y Dulces",enzo_desc:"La mejor cacio e pepe de Trastevere. ¡Reserva o ve temprano!",marmi_desc:"\"El depósito\" por sus mesas de mármol. ¡Pizza romana crujiente!",grazia_desc:"Cocina romana moderna. Perfecto para una cena romántica.",marzio_desc:"Desayuno con vista a Piazza Santa Maria. ¡Croissants increíbles!",freni_desc:"El aperitivo más cool de Trastevere. ¡Ve al atardecer!",colosseum:"Coliseo",colosseum_desc:"¡Reserva online! La entrada incluye Foro Romano y Palatino.",vatican:"Museos Vaticanos",vatican_desc:"¡Es obligatorio reservar! Ve el viernes por la noche con menos gente.",trevi:"Fontana di Trevi",trevi_desc:"¡Ve a las 7 de la mañana para disfrutar la fuente casi vacía!",fior_desc:"Helado artesanal bio. ¡El pistacho de Bronte es sublime!",call:"Llamar",book:"Reservar",view_map:"Ver en Google Maps",contacts_label:"Contactos Útiles",emergency_title:"Emergencias",emergency:"Emergencias",your_host:"Tu Host — Marco",footer_msg:"Esta guía fue creada con ❤️ por tu host <span class=\"footer-host\">Marco</span>.<br>¡Disfruta tu estancia en Roma!"}};
+let currentLang='it';
+function setLang(lang){currentLang=lang;document.querySelectorAll('.lang-btn').forEach(btn=>{btn.classList.toggle('active',btn.textContent.includes(lang.toUpperCase()))});document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(translations[lang][key])el.innerHTML=translations[lang][key]});const copyBtn=document.querySelector('.copy-btn');if(copyBtn&&!copyBtn.classList.contains('copied'))copyBtn.textContent=translations[lang].copy}
+
+const particlesContainer=document.getElementById('particles');for(let i=0;i<25;i++){const particle=document.createElement('div');particle.className='particle';particle.style.left=Math.random()*100+'%';particle.style.width=(3+Math.random()*4)+'px';particle.style.height=particle.style.width;particle.style.animationDelay=Math.random()*18+'s';particle.style.animationDuration=(12+Math.random()*10)+'s';particlesContainer.appendChild(particle)}
+
+const scrollProgress=document.getElementById('scrollProgress');window.addEventListener('scroll',()=>{const scrollTop=window.scrollY;const docHeight=document.documentElement.scrollHeight-window.innerHeight;const scrollPercent=(scrollTop/docHeight)*100;scrollProgress.style.width=scrollPercent+'%'});
+
+const parallaxTexts=document.querySelectorAll('.parallax-text');window.addEventListener('scroll',()=>{const scrollY=window.scrollY;parallaxTexts.forEach(text=>{const speed=parseFloat(text.dataset.speed)||0.02;text.style.transform=`translateY(${scrollY*speed*100}px)`})});
+
+const backToTop=document.getElementById('backToTop');window.addEventListener('scroll',()=>{backToTop.classList.toggle('visible',window.scrollY>600)});
+
+const counters=document.querySelectorAll('[data-count]');const animateCounter=(el)=>{const target=parseInt(el.dataset.count);let current=0;const increment=target/40;const timer=setInterval(()=>{current+=increment;if(current>=target){el.textContent=target;clearInterval(timer)}else{el.textContent=Math.ceil(current)}},40)};
+const counterObserver=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){animateCounter(entry.target);counterObserver.unobserve(entry.target)}})},{threshold:0.5});counters.forEach(c=>counterObserver.observe(c));
+
+function copyWifi(btn){const pw=document.getElementById('wifi-pw').textContent;navigator.clipboard.writeText(pw).then(()=>{btn.textContent=translations[currentLang].copied;btn.classList.add('copied');setTimeout(()=>{btn.textContent=translations[currentLang].copy;btn.classList.remove('copied')},2000)}).catch(()=>{const ta=document.createElement('textarea');ta.value=pw;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent=translations[currentLang].copied;btn.classList.add('copied');setTimeout(()=>{btn.textContent=translations[currentLang].copy;btn.classList.remove('copied')},2000)})}
+
+function toggleAcc(header){const item=header.parentElement;const body=item.querySelector('.accordion-body');const inner=body.querySelector('.accordion-body-inner');if(item.classList.contains('open')){body.style.maxHeight='0';item.classList.remove('open')}else{document.querySelectorAll('.accordion-item.open').forEach(other=>{other.querySelector('.accordion-body').style.maxHeight='0';other.classList.remove('open')});body.style.maxHeight=inner.scrollHeight+'px';item.classList.add('open')}}
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}})},{threshold:0.1,rootMargin:'0px 0px -60px 0px'});document.querySelectorAll('.observe-fade').forEach(el=>observer.observe(el));
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(a.getAttribute('href'));if(target){const offset=20;const top=target.getBoundingClientRect().top+window.scrollY-offset;window.scrollTo({top,behavior:'smooth'})}})});
+</script>
+
+<!-- WhatsApp floating CTA (host acquisition) -->
+<div class="wa-cta" role="complementary" aria-label="Richiedi una guida per la tua struttura">
+  <div class="wa-cta-label">✨ Vuoi vedere la guida per la TUA struttura?</div>
+  <a class="wa-cta-btn"
+     href="https://wa.me/393477203432?text=Ciao!%20Ho%20visto%20la%20demo%20e%20vorrei%20capire%20come%20creare%20una%20guida%20simile%20per%20la%20mia%20struttura."
+     target="_blank" rel="noopener noreferrer"
+     aria-label="Contattaci su WhatsApp per personalizzare la tua Guida">
+    <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M16.003 3C8.82 3 3 8.82 3 16a12.9 12.9 0 0 0 1.82 6.64L3 29l6.53-1.77A12.96 12.96 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16.003 3Zm0 23.66a10.6 10.6 0 0 1-5.42-1.49l-.39-.23-3.88 1.05 1.04-3.78-.25-.4a10.63 10.63 0 0 1-1.63-5.66c0-5.88 4.78-10.66 10.66-10.66 2.85 0 5.53 1.11 7.54 3.13a10.57 10.57 0 0 1 3.12 7.54c0 5.88-4.78 10.66-10.66 10.66Zm5.84-7.98c-.32-.16-1.9-.94-2.2-1.05-.3-.11-.52-.16-.73.16-.22.32-.85 1.05-1.04 1.27-.19.22-.38.24-.7.08-.32-.16-1.36-.5-2.58-1.6-.96-.85-1.6-1.9-1.79-2.22-.19-.32-.02-.5.14-.66.15-.14.32-.38.48-.57.16-.19.21-.32.32-.54.11-.22.05-.4-.03-.57-.08-.16-.72-1.74-.99-2.38-.26-.62-.53-.54-.73-.55-.19-.01-.4-.01-.61-.01-.21 0-.57.08-.87.4-.3.32-1.14 1.11-1.14 2.71 0 1.6 1.17 3.14 1.34 3.36.16.22 2.31 3.52 5.59 4.94.78.34 1.4.54 1.87.69.79.25 1.5.22 2.07.13.63-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.14-.3-.22-.62-.38Z"/>
+    </svg>
+    Personalizza la mia Guida
+  </a>
+</div>
+</body>
+</html>
